@@ -1,4 +1,4 @@
-package neo.bank.ext.system.adapter.output.kafka;
+package neo.bank.ext.system.framework.adapter.output.kafka;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,9 +15,9 @@ import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import neo.bank.ext.system.adapter.output.kafka.integration_events.converters.IntegrationEventConverterFactory;
 import neo.bank.ext.system.application.port.output.EventsPublisherPort;
 import neo.bank.ext.system.domain.models.events.EventPayload;
+import neo.bank.ext.system.framework.adapter.output.kafka.integration_events.converters.IntegrationEventConverterFactory;
 
 @ApplicationScoped
 @Slf4j

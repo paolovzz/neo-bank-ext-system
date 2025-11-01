@@ -1,8 +1,10 @@
 package neo.bank.ext.system.domain.models.events;
 
-import neo.bank.ext.system.domain.models.vo.IdOperazione;
-
-public record ControlliNonSuperati(IdOperazione idOperazione) implements EventPayload {
+public record ControlliNonSuperati(
+      String ibanMittente,
+    String idOperazione,
+    double importo
+) implements EventPayload {
 
     @Override
     public String eventType() {

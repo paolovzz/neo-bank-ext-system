@@ -28,10 +28,10 @@ public class MockSystemUseCase {
         double numeroCasuale = random.nextDouble(); // Numero tra 0.0 e 1.0
 
         log.info("Numero Casuale: {}", numeroCasuale);
-        if (numeroCasuale < 0.25) {
-            publisherPort.publish("SISTEMA_ESTERNO", null, List.of(new ControlliNonSuperati(cmd.getIdOperazione())));
+        if (numeroCasuale < 0.10) {
+            publisherPort.publish("SISTEMA_ESTERNO", null, List.of(new ControlliNonSuperati(cmd.getIbanMittente(), cmd.getIdOperazione(), cmd.getImporto())));
         } else {
-            publisherPort.publish("SISTEMA_ESTERNO", null, List.of(new ControlliSuperati(cmd.getIdOperazione())));
+            publisherPort.publish("SISTEMA_ESTERNO", null, List.of(new ControlliSuperati(cmd.getIbanMittente(), cmd.getIdOperazione(), cmd.getIbanDestinatario(), cmd.getCausale(),cmd.getImporto())));
         }
         log.info("Comando [applicaControlli] terminato...");
     }

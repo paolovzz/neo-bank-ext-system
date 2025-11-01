@@ -1,4 +1,4 @@
-package neo.bank.ext.system.adapter.input.kafka;
+package neo.bank.ext.system.framework.adapter.input.kafka;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletionStage;
@@ -10,41 +10,45 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.smallrye.reactive.messaging.annotations.Blocking;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.reactive.messaging.kafka.api.IncomingKafkaRecordMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import neo.bank.ext.system.application.MockSystemUseCase;
 import neo.bank.ext.system.application.port.input.dto.ApplicaControlliCmd;
-import neo.bank.ext.system.domain.models.vo.IdOperazione;
 
 @ApplicationScoped
 @Slf4j
-public class OperazioneConsumer {
+public class ContoCorrenteConsumer {
 
     @Inject
     private ObjectMapper mapper;
-
-    @Inject
+ @Inject
     private MockSystemUseCase app;
 
-    private static final String EVENT_OWNER = "OPERAZIONE";
-    private static final String OPERAZIONE_AVVIATA_EVENT_NAME = "OperazioneAvviata";
+    private static final String EVENT_OWNER = "CONTO_CORRENTE";
+    private static final String BONIFICO_PREDISPOSTO_EVENT_NAME = "BonificoPredisposto";
 
-    @Incoming("operazione-notifications")
+    @Incoming("conto-corrente-notifications")
     @Blocking
     public CompletionStage<Void> consume(Message<String> msg) {
         var metadata = msg.getMetadata(IncomingKafkaRecordMetadata.class).orElseThrow();
         String eventType = new String(metadata.getHeaders().lastHeader("eventType").value(), StandardCharsets.UTF_8);
         String aggregateName = new String(metadata.getHeaders().lastHeader("aggregateName").value(),
                 StandardCharsets.UTF_8);
+        String payload = msg.getPayload();
         log.info("INCOMING:\n- EventType => {}\n- AggregateName => {}", eventType, aggregateName);
         if (aggregateName.equals(EVENT_OWNER)) {
+            JsonNode json = convertToJsonNode(payload);
             switch (eventType) {
-                case OPERAZIONE_AVVIATA_EVENT_NAME:{
-                    String idOperazione =  (String) metadata.getKey();
-                    app.applicaControlli(new ApplicaControlliCmd(new IdOperazione(idOperazione)));
+                case BONIFICO_PREDISPOSTO_EVENT_NAME:{
+                    String ibanMittente = json.get("ibanMittente").asText();
+                    String idOperazione = json.get("idOperazione").asText();
+                    String ibanDestinatario = json.get("ibanDestinatario").asText();
+                    String causale = json.get("causale").asText();
+                    double importo =  Math.abs(json.get("importo").asDouble());
+                    app.applicaControlli(new ApplicaControlliCmd(ibanMittente, idOperazione, ibanDestinatario, causale, importo));
                     break;
                 }
                 default:

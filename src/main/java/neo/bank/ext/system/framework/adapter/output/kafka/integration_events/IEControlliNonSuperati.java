@@ -1,4 +1,4 @@
-package neo.bank.ext.system.adapter.output.kafka.integration_events;
+package neo.bank.ext.system.framework.adapter.output.kafka.integration_events;
 
 import java.io.Serializable;
 
@@ -8,4 +8,6 @@ import lombok.Value;
 public class IEControlliNonSuperati implements Serializable {
 
     private String idOperazione;
+    private String ibanMittente;
+    private double importo;
 }
