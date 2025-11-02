@@ -29,6 +29,7 @@ public class ContoCorrenteConsumer {
 
     private static final String EVENT_OWNER = "CONTO_CORRENTE";
     private static final String BONIFICO_PREDISPOSTO_EVENT_NAME = "BonificoPredisposto";
+    private static final String CONTO_CORRENTE_APERTO_EVENT_NAME = "ContoCorrenteAperto";
 
     @Incoming("conto-corrente-notifications")
     @Blocking
@@ -49,6 +50,11 @@ public class ContoCorrenteConsumer {
                     String causale = json.get("causale").asText();
                     double importo =  Math.abs(json.get("importo").asDouble());
                     app.applicaControlli(new ApplicaControlliCmd(ibanMittente, idOperazione, ibanDestinatario, causale, importo));
+                    break;
+                }
+                case CONTO_CORRENTE_APERTO_EVENT_NAME:{
+                    String iban = json.get("iban").asText();
+                    app.emettiBonificoExt(iban);
                     break;
                 }
                 default:
