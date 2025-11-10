@@ -10,9 +10,7 @@ public class ControlliNonSuperatiConverter implements IntegrationEventConverter<
     @Override
     public IEControlliNonSuperati convert(ControlliNonSuperati ev) {
         return new IEControlliNonSuperati(
-            ev.idOperazione(),
-            ev.ibanMittente(),
-            ev.importo()
+            ev.idOperazione()
         );
     }
 

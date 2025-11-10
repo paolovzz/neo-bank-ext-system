@@ -8,6 +8,4 @@ import lombok.Value;
 public class IEControlliNonSuperati implements Serializable {
 
     private String idOperazione;
-    private String ibanMittente;
-    private double importo;
 }

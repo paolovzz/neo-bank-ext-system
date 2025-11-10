@@ -10,11 +10,7 @@ public class ControlliSuperatiConverter implements IntegrationEventConverter<Con
     @Override
     public IEControlliSuperati convert(ControlliSuperati ev) {
         return new IEControlliSuperati(
-            ev.ibanMittente(),
-            ev.idOperazione(),
-            ev.ibanDestinatario(),
-            ev.causale(),
-            ev.importo()
+            ev.idOperazione()
         );
     }
 

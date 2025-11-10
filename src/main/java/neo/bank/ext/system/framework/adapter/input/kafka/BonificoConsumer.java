@@ -20,18 +20,17 @@ import neo.bank.ext.system.application.port.input.dto.ApplicaControlliCmd;
 
 @ApplicationScoped
 @Slf4j
-public class ContoCorrenteConsumer {
+public class BonificoConsumer {
 
     @Inject
     private ObjectMapper mapper;
  @Inject
     private MockSystemUseCase app;
 
-    private static final String EVENT_OWNER = "CONTO_CORRENTE";
-    private static final String BONIFICO_PREDISPOSTO_EVENT_NAME = "BonificoPredisposto";
-    private static final String CONTO_CORRENTE_APERTO_EVENT_NAME = "ContoCorrenteAperto";
+    private static final String EVENT_OWNER = "BONIFICO";
+    private static final String BONIFICO_CREATO_EVENT_NAME = "BonificoCreato";
 
-    @Incoming("conto-corrente-notifications")
+    @Incoming("bonifico-notifications")
     @Blocking
     public CompletionStage<Void> consume(Message<String> msg) {
         var metadata = msg.getMetadata(IncomingKafkaRecordMetadata.class).orElseThrow();
@@ -43,18 +42,9 @@ public class ContoCorrenteConsumer {
         if (aggregateName.equals(EVENT_OWNER)) {
             JsonNode json = convertToJsonNode(payload);
             switch (eventType) {
-                case BONIFICO_PREDISPOSTO_EVENT_NAME:{
-                    String ibanMittente = json.get("ibanMittente").asText();
+                case BONIFICO_CREATO_EVENT_NAME:{
                     String idOperazione = json.get("idOperazione").asText();
-                    String ibanDestinatario = json.get("ibanDestinatario").asText();
-                    String causale = json.get("causale").asText();
-                    double importo =  Math.abs(json.get("importo").asDouble());
-                    app.applicaControlli(new ApplicaControlliCmd(ibanMittente, idOperazione, ibanDestinatario, causale, importo));
-                    break;
-                }
-                case CONTO_CORRENTE_APERTO_EVENT_NAME:{
-                    String iban = json.get("iban").asText();
-                    app.emettiBonificoExt(iban);
+                    app.applicaControlli(new ApplicaControlliCmd(idOperazione));
                     break;
                 }
                 default:

@@ -7,9 +7,5 @@ import lombok.Value;
 @Value
 public class IEControlliSuperati implements Serializable {
 
-    String ibanMittente;
     String idOperazione;
-    String ibanDestinatario;
-    String causale;
-    double importo;
 }
